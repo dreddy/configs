@@ -1,0 +1,14 @@
+gtk-theme-name = "Clearlooks"
+
+gtk-button-images = 0
+gtk-menu-images = 0
+gtk-cursor-blink = 0
+gtk-toolbar-style = 0
+gtk-font-name = "Droid Sans 8"
+
+gtk-key-theme-name = "Emacs"
+gtk-toolbar-style=GTK_TOOLBAR_ICONS
+gtk-toolbar-icon-size = GTK_ICON_SIZE_SMALL_TOOLBAR
+
+gtk-entry-select-on-focus = 1
+

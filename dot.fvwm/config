@@ -1,0 +1,280 @@
+
+# Get Distribution to set some paths
+Test (f /etc/redhat-release) Echo Redhat Environment detected
+Test (f /etc/SuSE-release) Echo SuSE Environment detected
+
+###############################################################################
+#                                                                             #
+# Menus                                                                       #
+#                                                                             #
+###############################################################################
+
+
+AddToMenu RootMenu "Root Menu" Title
+Test (x xfterm4)		+ "&Terminal"	Exec exec xfterm4
+Test (x gnome-terminal)		+ "&GTerminal"	Exec exec gnome-terminal
+Test (x x-terminal-emulator)	+ "&DTerminal"	Exec exec x-terminal-emulator
++ "&XTerminal"					Exec exec xterm
++ "&TinyIS"					Exec SHELL=/usr/intel/bin/tcsh tinyis
++ ""                  Nop
+Test (f /etc/redhat-release)	+ "&Emacs"	Exec exec /p/psg/data/dreddy/local/bin/emacs
+Test (f /etc/SuSE-release)	+ "&Emacs"	Exec exec /usr/intel/bin/emacs
+Test (x firefox)		+ "&Firefox"	Exec exec firefox
++ "Session Resize"    Popup RandRMenu
++ ""                  Nop
++ "&SendTo"           Popup SendTo-Ops
++ "&Rearrange "       Popup MenuWinRearrange
++ "&Console "	      Module FvwmConsole
++ "Re&fresh Screen"   Refresh
++ "Exit to xterm"     Restart xterm
++ ""                  Nop
++ "&Restart WM"       Restart
++ "Exit WM"           Quit
+
+AddToMenu RandRMenu
++ "1920x1000"         RandRFunction 1920x1000
++ "1920x1200"         RandRFunction 1920x1200
++ "1600x900"          RandRFunction 1600x900
+
+AddToMenu Window-Ops
++ "&Move"             Move
++ "&Resize"           Resize
++ "&Iconify"          Iconify
++ "&Stick"            Stick
++ ""                  Nop
++ "SendTo"            Popup SendTo-Ops
++ "&Close"            Close
++ "&Destroy"          Destroy
+
+AddToMenu SendTo-Ops
++ "Desk 0"            MoveToDesk 0 0
++ "Desk 1"            MoveToDesk 0 1
++ "Desk 2"            MoveToDesk 0 2
++ "Desk 3"            MoveToDesk 0 3
+
+AddToMenu X11-Session
++ "Re&fresh Screen"   Refresh
++ "&Restart WM"       Restart
++ ""                  Nop
++ "Exit to xterm"     Restart xterm
++ "Exit WM"           Quit
+
+# WinRearrange 
+DestroyMenu MenuWinRearrange
+AddToMenu   MenuWinRearrange
++ "Tile vertically" FvwmRearrange -tile 0 4 100 100
++ "Cascade" FvwmRearrange -animate -cascade -resize -m 10 10 50 50 -incx 2
++ "Tile horizontally" FvwmRearrange -tile -h -m 0 2 100 100
+
+###############################################################################
+#                                                                             #
+# Keyboard & Mouse Bindings                                                   #
+#                                                                             #
+###############################################################################
+
+# Ignore the "Numlock" key so it does not interfere with keyboard shortcuts
+#
+IgnoreModifiers L2
+
+# Ctrl+Alt virtual desktop navigation
+#
+Key Up A SM           Scroll -100000 0
+Key Down A SM         Scroll  100000 0
+Key Page_Up A SM      Scroll -100000 0
+Key Page_Down A SM    Scroll  100000 0
+
+Key Left  A CM        Direction West  (CurrentPage, AcceptsFocus, Visible) Focus
+Key Right A CM        Direction East  (CurrentPage, AcceptsFocus, Visible) Focus
+Key Up    A CM        Direction North (CurrentPage, AcceptsFocus, Visible) Focus
+Key Down  A CM        Direction South (CurrentPage, AcceptsFocus, Visible) Focus
+
+Key t     A CM        FvwmRearrange -tile 0 4 100 100
+
+# Ctrl+Alt shortcuts
+#
+Key M     A CM        Menu RootMenu Nop
+Key R     A CM        Restart
+
+Test (x xfterm4)      		Key Return A  4       Exec exec xfterm4
+
+# Simple default mouse bindings for the root window:
+#
+Mouse 1	R A           Menu RootMenu Nop
+Mouse 2	R A           Menu Window-Ops Nop
+Mouse 3	R A           WindowList
+
+# ... and for the title bar buttons:
+#
+Mouse 0	1 A           Menu Window-Ops Close
+Mouse 0	2 A           Maximize
+Mouse 0	4 A           Iconify
+
+# ... and other parts of the windows / borders / icons:
+#
+Mouse 1	FS A          Resize-or-Raise
+Mouse 1	T A           Move-or-Raise
+Mouse 1	I A           Move-or-Iconify
+Mouse 2	I A           Iconify
+Mouse 2	FST A         Menu Window-Ops Nop
+Mouse 3	TSIF A        RaiseLower
+
+###############################################################################
+#                                                                             #
+# Init & Restart Functions                                                    #
+#                                                                             #
+###############################################################################
+
+DestroyFunc StartFunction
+AddToFunc StartFunction
++ I Module FvwmButtons Launcher
++ I Read mystyle quiet
++ I TestRc (-1) Read $[HOME]/.fvwm/mystyle quiet
+
+DestroyFunc InitFunction
+AddToFunc InitFunction
++ I Nop
+
+DestroyFunc RestartFunction
+AddToFunc RestartFunction
++ I Nop
+
+DestroyFunc SessionInitFunction
+AddToFunc SessionInitFunction
++ I Nop
+
+DestroyFunc SessionRestartFunction
+AddToFunc SessionRestartFunction
++ I Nop
+
+DestroyFunc RandRFunction
+AddToFunc RandRFunction
++ I Exec exec xrandr -s $0
++ I Schedule 1000 Restart
+
+###############################################################################
+#                                                                             #
+# Custom Functions                                                            #
+#                                                                             #
+###############################################################################
+
+DestroyFunc Move-or-Raise
+AddToFunc Move-or-Raise
++ I Raise
++ M Move
+
+DestroyFunc Move-or-Iconify
+AddToFunc Move-or-Iconify
++ I Raise
++ M Move
++ D Iconify
+
+DestroyFunc Resize-or-Raise
+AddToFunc Resize-or-Raise
++ I Raise
++ M Resize
+
+###############################################################################
+#                                                                             #
+# Global Behavior Commands                                                    #
+#                                                                             #
+###############################################################################
+
+ClickTime 750
+EdgeResistance 250
+EdgeScroll 0 0
+
+DeskTopSize 2x1
+DesktopName 0 Main
+DesktopName 1 Desk1
+DesktopName 2 Desk2
+DesktopName 3 Desk3
+
+###############################################################################
+#                                                                             #
+# Basic Style Settings                                                        #
+#                                                                             #
+###############################################################################
+
+ImagePath $[HOME]/.fvwm/icons:+
+
+EwmhBaseStruts	0 0 40 0
+DefaultColors \#000000 \#c0c0c0
+DefaultFont xft:Sans:Normal:size=10:antialias=True
+Emulate Mwm
+MenuStyle * Background \#c0c0c0
+MenuStyle * Foreground \#000000
+MenuStyle * Mwm
+MenuStyle * Font xft:Sans:italic:size=10:antialias=True
+Style * BackColor \#c0c0c0
+Style * BorderWidth 3
+Style * HandleWidth 3
+Style * ClickToFocus
+Style * DecorateTransient
+Style * EdgeMoveDelay 250
+Style * EdgeMoveResistance 10
+Style * Font xft:Sans:italic:size=9:antialias=True
+Style * ForeColor \#606060
+Style * FPLenient
+Style * HilightBack \#c0c0c0
+Style * HilightFore \#000000
+Style * HintOverride
+Style * Icon xterm.xpm
+Style * IconBox 1 1 1000 32, IconFill Left Bottom, Icongrid 64 64
+Style * IconSize 32 32
+Style * MwmBorder
+Style * MwmButtons
+Style * MwmDecor
+Style * MwmFunctions
+Style * TileCascadePlacement
+Style * !UsePPosition
+TitleStyle Centered Height 20
+
+Style Fvwm* BorderWidth 1
+Style Fvwm* CirculateSkip
+Style Fvwm* CirculateSkipIcon
+Style Fvwm* Sticky
+Style Fvwm* !Title
+Style Fvwm* WindowListSkip
+
+###############################################################################
+#                                                                             #
+# Module: FvwmPager+Script+Modules                                            #
+#                                                                             #
+###############################################################################
+
+DestroyModuleConfig Launcher: *
+*Launcher: Geometry 500x35-0+0
+*Launcher: Columns  250
+*Launcher: Rows     22
+
+*Launcher: Frame        0
+*Launcher: Colorset     12
+*Launcher: Padding      0 0
+*Launcher: BoxSize      fixed
+*Launcher: Font         "xft:Sans:size=10"
+
+*Launcher: (250x1, Frame 0)
+*Launcher: (200x20, Center, Frame 0, Swallow FvwmPager 'Module FvwmPager 0 3')
+*Launcher: (50x20, Center, Frame 0, Swallow(UseOld, NoClose) DClock `FvwmScript $[HOME]/.fvwm/DClock`)
+*Launcher: (250x1, Frame 0,)
+
+Style Launcher NoTitle, StaysOnBottom, Sticky, WindowListSkip
+Style Launcher NoHandles, FixedPosition, !Iconifiable, StaysOnTop
+Style Launcher BorderWidth 0, HandleWidth 0, NeverFocus 
+
+Style FvwmPager BorderWidth 0
+Style FvwmPager FixedPosition
+Style FvwmPager FixedSize
+Style FvwmPager HandleWidth 0
+Style FvwmPager StaysOnBottom
+
+*FvwmPager: Back #666666
+*FvwmPager: Fore #444444
+*FvwmPager: Font none
+*FvwmPager: Balloons All
+*FvwmPager: BalloonBack #d0d0d0
+*FvwmPager: BalloonFore #303030
+
+*FvwmPager: Geometry 240x40-0+0
+*FvwmPager: Hilight #c0c0c0
+*FvwmPager: SmallFont none

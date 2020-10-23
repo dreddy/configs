@@ -1,0 +1,187 @@
+
+set $mod4  Mod4
+set $mod1  Mod1
+
+set $big	DP1
+set $small	HDMI1
+
+#gaps inner 15
+#gaps outer 15
+
+font pango:Sans 9
+
+new_window normal
+new_float normal
+
+focus_follows_mouse no
+floating_modifier $mod4
+
+
+# start a terminal
+bindsym $mod4+Return exec exec urxvt
+
+# kill focused window
+bindsym $mod1+Control+q kill
+
+# start dmenu (a program launcher)
+bindsym $mod4+e exec rofi -show run -font "Sans 10"
+bindsym $mod4+p exec rofi -show window -font "Sans 10"
+
+# change focus
+bindsym $mod4+Down focus down
+bindsym $mod4+Up focus up
+bindsym $mod4+Right focus right
+bindsym $mod4+Left focus left
+
+# Move windows
+bindsym $mod4+Shift+Left move left
+bindsym $mod4+Shift+Down move down
+bindsym $mod4+Shift+Up move up
+bindsym $mod4+Shift+Right move right
+
+# split in horizontal orientation
+bindsym $mod4+bar split h 
+
+# split in vertical orientation
+bindsym $mod4+minus split v 
+
+# enter fullscreen mode for the focused container
+bindsym $mod1+Control+f fullscreen
+
+# toggle tiling / floating
+bindsym $mod4+space floating toggle
+
+# change focus between tiling / floating windows
+bindsym $mod4+t focus mode_toggle
+
+# focus the parent container
+bindsym $mod4+Shift+p focus parent
+
+# focus the child container
+#bindsym $mod4+Shift+c focus child
+
+# switch to workspace
+bindsym $mod4+1 workspace 1:main
+bindsym $mod4+2 workspace 2:term
+bindsym $mod4+3 workspace 3:void
+bindsym $mod4+4 workspace 4:wwww
+bindsym $mod4+5 workspace 5:rdesk1
+bindsym $mod4+6 workspace 6:itp
+
+# move focused container to workspace
+bindsym $mod4+Shift+1 move container to workspace 1:main
+bindsym $mod4+Shift+2 move container to workspace 2:term
+bindsym $mod4+Shift+3 move container to workspace 3:void
+bindsym $mod4+Shift+4 move container to workspace 4:wwww
+bindsym $mod4+Shift+5 move container to workspace 5:rdesk1
+bindsym $mod4+Shift+6 move container to workspace 6:itp
+
+# Force rdesk1 to be on HDMI
+workspace 1:main	output $big
+workspace 2:term	output $big
+workspace 3:void	output $big
+#workspace 5:rdesk1	output $small
+#workspace 6:itp		output $small
+
+bindsym $mod1+Control+Right move workspace to output right
+bindsym $mod1+Control+Left move workspace to output left
+
+bindsym $mod4+F12  scratchpad show
+bindsym $mod4+Shift+F12  move scratchpad
+
+# reload the configuration file
+bindsym $mod4+Shift+c reload
+
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod4+Shift+r restart
+
+# exit i3 (logs you out of your X session)
+bindsym $mod4+Shift+q exec "i3-nagbar -t warning -m 'Do you really want to quit ? ' -b 'Yes, exit i3' 'i3-msg exit'"
+
+# resize window (you can also use the mouse for that)
+mode "resize" {
+        bindsym Left resize shrink width 5 px or 5 ppt
+        bindsym Up resize grow height 5 px or 5 ppt
+        bindsym Down resize shrink height 5 px or 5 ppt
+        bindsym Right resize grow width 5 px or 5 ppt
+
+        # back to normal: Enter or Escape
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+# Resize key
+bindsym $mod4+r mode "resize"
+
+#GO to previous workspace
+bindsym $mod4+Tab workspace back_and_forth
+
+#Go to latest urgent client
+bindsym $mod4+a [urgent=latest] focus
+
+# Client rules
+bindsym $mod4+Shift+h move left
+bindsym $mod4+Shift+j move down
+bindsym $mod4+Shift+k move up
+bindsym $mod4+Shift+l move right
+
+# Mediakeys
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume 0 +5%
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5%
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
+
+bindsym XF86AudioNext exec "playerctl next" 
+bindsym XF86AudioPlay exec "playerctl play-pause"
+bindsym XF86AudioPrev exec "playerctl previous"
+
+bindsym XF86MonBrightnessDown exec --no-startup-id /home/dreddy/.config/i3/scripts/dim.sh
+bindsym XF86MonBrightnessUp exec --no-startup-id /home/dreddy/.config/i3/scripts/bright.sh
+
+
+bindsym $mod4+u [urgent=latest] focus
+
+# Floating applications
+for_window [class="Google-chrome"] floating enable
+for_window [class="Firefox"] floating enable
+for_window [instance="scratchpad"] floating enable, move to scratchpad, border pixel 1
+
+# Applications on specific workspaces
+#assign [class="rdesktop"] 5:rdesk1
+
+
+# Colors for clients
+# class                 border  backgr. text    indicator child_border
+client.focused          #4c7899 #285577 #ffffff #2e9ef4   #285577
+client.focused_inactive #333333 #5f676a #ffffff #484e50   #5f676a
+client.unfocused        #505050 #002b36 #888888 #292d2e   #222222
+client.urgent           #2f343a #900000 #ffffff #900000   #900000
+client.placeholder      #000000 #0c0c0c #ffffff #000000   #0c0c0c
+
+client.background       #ffffff
+
+#client.focused		#255662	#255662	#C0C0C0	#255662
+#client.focused_inactive	#073642	#073642	#839496	#073642
+#client.unfocused	#073642 #073642 #839496 #292d2e
+#client.urgent		#2f343a #A83838 #ffffff #A83838
+
+bar {
+        status_command i3status
+	tray_output none
+	position top
+	font pango:Sans 10
+	mode dock
+	binding_mode_indicator yes
+	colors {
+        background #002b36
+        statusline #ffffff
+        separator #666666
+
+        focused_workspace  #4c7899 #285577 #ffffff
+        active_workspace   #333333 #5f676a #ffffff
+        inactive_workspace #333333 #002b36 #888888
+        urgent_workspace   #2f343a #900000 #ffffff
+        binding_mode       #2f343a #900000 #ffffff
+}
+}
+# autostart
+exec_always $HOME/.config/i3/scripts/startup.sh
