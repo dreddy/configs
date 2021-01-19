@@ -113,7 +113,8 @@
   (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")))
   (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/"))))
 
-(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.2")
+
+;;(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.2")
 
 (when (version< emacs-version "27.0") (package-initialize))
 ;; Install dependencies
