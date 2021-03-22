@@ -1,7 +1,6 @@
 ;; This configuration needs to work with emacs25/26/27 and with/without ssl - dreddy
 
-(add-to-list 'load-path
-             (concat user-emacs-directory (convert-standard-filename "lisp/")))
+(add-to-list 'load-path user-emacs-directory)
 
 ;; Display
 (when (display-graphic-p)

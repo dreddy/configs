@@ -6,6 +6,13 @@
   :ensure t
   :defer t)
 
+(use-package ggtags
+    :ensure t
+    :commands ggtags-mode
+    :config
+    (unbind-key "M-<" ggtags-mode-map)
+    (unbind-key "M->" ggtags-mode-map))
+
 (use-package ivy
   :ensure t
   :defer t
@@ -42,7 +49,14 @@
   (c-set-style "my-style")        ; use my-style defined above
   (auto-fill-mode)         
   (c-toggle-auto-hungry-state 1))
-
 (add-hook 'c++-mode-hook 'my-c++-mode-hook)
+
+(defun my-c-mode-hook()
+  (setq c-basic-offset 4)
+  (setq c-default-style "linux")
+  (setq indent-tabs-mode nil)
+  (ggtags-mode)
+  )
+(add-hook 'c-mode-hook 'my-c-mode-hook)
 
 (provide 'my-packages)
