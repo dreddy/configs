@@ -4,15 +4,9 @@
 (when (display-graphic-p)
       (scroll-bar-mode -1)            ; Disable the scroll bar
       (tool-bar-mode -1)              ; Disable the tool bar
-      (tooltip-mode -1)              ; Disable the tooltips
-      (progn
-        (setq initial-frame-alist
-              '((width . 90) (height . 50) (tool-bar-lines . 0) (inhibit-double-buffering . t)))
-        (setq default-frame-alist
-              '((width . 90) (height . 50) (tool-bar-lines . 0) (inhibit-double-buffering . t)))
-        ))
+      (tooltip-mode -1))              ; Disable the tooltips
 
-(load-theme 'my-solarized t)
+(load-theme 'nord t)
 
 ;; Platform specific settings
 (cond ((eq system-type 'windows-nt)
@@ -98,7 +92,7 @@
 ;;; Install into separate package dirs for each Emacs version,
 ;;; to use a single filesystem on multiple environments
 (let ((versioned-package-dir
-       (expand-file-name (format "elpa-%s.%s" emacs-major-version emacs-minor-version)
+       (expand-file-name (format "elpa-%s" emacs-major-version)
                          user-emacs-directory)))
   (setq package-user-dir versioned-package-dir))
 
