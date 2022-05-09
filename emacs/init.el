@@ -10,7 +10,8 @@
 
 ;; Platform specific settings
 (cond ((eq system-type 'windows-nt)
-       (setq inhibit-compacting-font-caches t))
+       (setq inhibit-compacting-font-caches t)
+       (setq create-lockfiles nil))
       ((eq system-type 'darwin)
        (setenv "PATH" "/usr/local/bin:$PATH" t)
        (setq mac-command-modifier 'meta
