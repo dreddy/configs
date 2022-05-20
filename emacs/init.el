@@ -13,27 +13,28 @@
        (setq inhibit-compacting-font-caches t)
        (setq create-lockfiles nil))
       ((eq system-type 'darwin)
-       (setenv "PATH" "/usr/local/bin:$PATH" t)
+       (setenv "PATH" "/opt/homebrew/bin:$PATH" t)
        (setq mac-command-modifier 'meta
-             mac-option-modifier 'super))
+             mac-option-modifier 'super)
+       (set-frame-font "Menlo:size=14"))
       ) ;; end cond
-
-;; Default indentation
-(setq-default indent-tabs-mode nil
-              tab-width 4
-              word-wrap 1)
-
-(fset 'yes-or-no-p 'y-or-n-p)
 
 ;; Enable disabled commands
 (put 'narrow-to-region 'disabled nil)
 (put 'upcase-region  'disabled nil)
 (put 'downcase-region  'disabled nil)
 
+;; fsets
+(fset 'yes-or-no-p 'y-or-n-p)
+;; Default indentation
+(setq-default indent-tabs-mode nil
+              tab-width 4
+              word-wrap 1)
+
 ;; Default Behavior
 (setq
- ad-redefinition-action 'accept                   ; Silence warnings for redefinition
- cursor-in-non-selected-windows t                 ; Hide the cursor in inactive win
+ ad-redefinition-action 'accept
+ cursor-in-non-selected-windows t
  inhibit-startup-screen t
  initial-scratch-message ";; ready\n\n"
  unibyte-display-via-language-environment t

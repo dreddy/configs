@@ -5,6 +5,3 @@
                          user-emacs-directory)))
   (setq package-user-dir versioned-package-dir))
 
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(inhibit-double-buffering . t) default-frame-alist)
-(push '(vertical-scroll-bars) default-frame-alist)
