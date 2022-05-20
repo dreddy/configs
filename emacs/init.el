@@ -50,7 +50,6 @@
  mark-ring-max 128
  scroll-conservatively most-positive-fixnum
  select-enable-clipboard t
- tab-width 4
  use-package-always-ensure t
  vc-follow-symlinks t
  view-read-only t
@@ -99,13 +98,7 @@
 
 ;; Package configuration
 (require 'package)
-
-;; Let's see how long the insecure urls last
-(let* ((proto (if (gnutls-available-p) "https" "http")))
-  (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")))
-  (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/"))))
-
-
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
 ;;(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.2")
 
 (when (version< emacs-version "27.0") (package-initialize))
