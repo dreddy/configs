@@ -13,7 +13,6 @@
        (setq inhibit-compacting-font-caches t)
        (setq create-lockfiles nil))
       ((eq system-type 'darwin)
-       (setenv "PATH" "/opt/homebrew/bin:$PATH" t)
        (setq mac-command-modifier 'meta
              mac-option-modifier 'super)
        (set-frame-font "Menlo:size=14"))
@@ -89,14 +88,6 @@
           ("ftp" . "proxy-dmz.intel.com:911")
           )))
 
-
-;;; Install into separate package dirs for each Emacs version,
-;;; to use a single filesystem on multiple environments
-(let ((versioned-package-dir
-       (expand-file-name (format "elpa-%s" emacs-major-version)
-                         user-emacs-directory)))
-  (setq package-user-dir versioned-package-dir))
-
 ;; Package configuration
 (require 'package)
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
@@ -140,6 +131,9 @@
                 ivy-count-format "%d/%d "
                 ivy-re-builders-alist '((t . ivy--regex-fuzzy))))
 
+(use-package exec-path-from-shell
+  :config (when (memq window-system '(mac ns x))
+            (exec-path-from-shell-initialize)))
 
 (use-package yasnippet
   :ensure t
