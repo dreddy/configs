@@ -80,6 +80,8 @@
  create-lockfiles nil
  )
 
+(add-hook 'before-save-hook 'delete-trailing-whitespace)
+
 ;; Save all tempfiles in $TMPDIR/emacs-$UID/
 ;; (defconst emacs-tmp-dir
 ;;   (format "%s%s%s/" temporary-file-directory "emacs-" (user-login-name)))
@@ -164,29 +166,25 @@
   :defer t
   :commands magit-get-top-dir
   :bind (("C-c g" . magit-status)
-         ("C-c G" . magit-dispatch)
-         ("C-c m l" . magit-log-buffer-file)
-         ("C-c m b" . magit-blame))
+         ("C-c G" . magit-dispatch-popup))
   :config
-  (setq magit-display-buffer-function 'magit-display-buffer-same-window-except-diff-v1)
-  (setq magit-diff-refine-hunk t))
+  (setq magit-diff-refine-hunk t)
+  (setq global-magit-file-mode 1))
 
-(use-package rustic
-  :ensure
-  :bind (:map rustic-mode-map
-              ("C-c C-c l" . flycheck-list-errors))
+(use-package toml-mode)
+
+(use-package rust-mode
+    :config
+  (setq rust-format-on-save t)
+  (setq rust-indent-offset 4))
+
+(use-package cargo-mode
   :config
-  ;; comment to disable rustfmt on save
-  (setq rustic-format-on-save t)
-  (add-hook 'rustic-mode-hook 'rk/rustic-mode-hook))
+  (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
-(defun rk/rustic-mode-hook ()
-  ;; so that run C-c C-c C-r works without having to confirm, but don't try to
-  ;; save rust buffers that are not file visiting. Once
-  ;; https://github.com/brotzeit/rustic/issues/253 has been resolved this should
-  ;; no longer be necessary.
-  (when buffer-file-name
-    (setq-local buffer-save-without-query t)))
+(use-package flycheck-rust
+  :config (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+
 
 (require 'linux-kernel-c-style)
 (defun dr/c-mode-hook ()
