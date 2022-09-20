@@ -171,6 +171,18 @@
   (setq magit-diff-refine-hunk t)
   (setq global-magit-file-mode 1))
 
+(use-package python
+  :mode ("\\.py\\'" . python-mode)
+        ("\\.wsgi$" . python-mode)
+  :interpreter ("python3" . python-mode)
+
+  :init
+  (setq-default indent-tabs-mode nil)
+
+  :config
+  (setq python-indent-offset 4)
+  (add-hook 'python-mode-hook 'smartparens-mode))
+
 (use-package toml-mode)
 
 (use-package rust-mode
