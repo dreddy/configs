@@ -173,15 +173,14 @@
 
 (use-package python
   :mode ("\\.py\\'" . python-mode)
-        ("\\.wsgi$" . python-mode)
-  :interpreter ("python3" . python-mode)
-
+  :ensure nil
   :init
   (setq-default indent-tabs-mode nil)
-
   :config
-  (setq python-indent-offset 4)
-  (add-hook 'python-mode-hook 'smartparens-mode))
+  (setq
+   python-shell-interpreter "python3"
+   python-indent-offset 4
+   python-indent-guess-indent-offset-verbose nil))
 
 (use-package toml-mode)
 
@@ -196,6 +195,14 @@
 
 (use-package flycheck-rust
   :config (add-hook 'flycheck-mode-hook #'flycheck-rust-setup))
+
+(use-package org
+  :ensure nil
+  :config
+  (setq
+   org-log-done t
+   org-src-fontify-natively t
+   org-startup-folded nil))
 
 
 (require 'linux-kernel-c-style)
