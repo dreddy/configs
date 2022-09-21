@@ -74,24 +74,14 @@
  view-read-only t
  custom-file (concat user-emacs-directory "custom.el")
  ;; backup-inhibited t
- backup-directory-alist '((".*" . "~/.config/emacs/backup"))
- auto-save-list-file-prefix "~/.config/emacs/autosave/"
- auto-save-file-name-transforms '((".*" "~/.config/emacs/autosave/" t))
+ backup-directory-alist '((".*" . "~/.config/emacs/autosaves"))
+ auto-save-list-file-prefix "~/.config/emacs/autosaves/"
+ auto-save-file-name-transforms '((".*" "~/.config/emacs/autosaves/" t))
  create-lockfiles nil
+ ;; gnutls-algorithm-priority "NORMAL:-VERS-TLS1.2"
  )
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-;; Save all tempfiles in $TMPDIR/emacs-$UID/
-;; (defconst emacs-tmp-dir
-;;   (format "%s%s%s/" temporary-file-directory "emacs-" (user-login-name)))
-;; (setq backup-directory-alist
-;;       `((".*" . ,(format "%s/%s" emacs-tmp-dir "backed-up-files"))))
-;; (setq auto-save-file-name-transforms
-;;       `((".*" ,(format "%s/%s" emacs-tmp-dir "auto-saved-files") t)))
-;; (setq auto-save-list-file-prefix
-;;       (format "%s/%s" emacs-tmp-dir "auto-saved-files"))
-
 
 ;; Theme
 (load-theme 'nord t)
@@ -132,8 +122,9 @@
 
 ;; Package configuration
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
-;;(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.2")
+(unless (assoc-default "melpa" package-archives)
+  (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t))
+
 
 (when (version< emacs-version "27.0") (package-initialize))
 ;; Install dependencies
@@ -174,13 +165,12 @@
 (use-package python
   :mode ("\\.py\\'" . python-mode)
   :ensure nil
-  :init
-  (setq-default indent-tabs-mode nil)
   :config
   (setq
    python-shell-interpreter "python3"
    python-indent-offset 4
-   python-indent-guess-indent-offset-verbose nil))
+   python-indent-guess-indent-offset-verbose nil)
+  (add-hook 'python-mode-hook 'hs-minor-mode))
 
 (use-package toml-mode)
 
@@ -202,6 +192,7 @@
   (setq
    org-log-done t
    org-src-fontify-natively t
+   org-startup-indented t
    org-startup-folded nil))
 
 
@@ -216,6 +207,34 @@
             c-basic-offset 4))))
 
 (add-hook 'c-mode-hook 'dr/c-mode-hook)
+
+(auto-insert-mode)
+(setq auto-insert-alist '())
+(setq auto-insert-query nil)
+
+(add-to-list 'auto-insert-alist
+             '(python-mode
+               nil
+               "#!/usr/bin/env python3\n"
+               "\n"
+               _ "\n"
+               "\n"
+               "if __name__ == '__main__':\n"
+               > "\n\n"
+               ))
+(add-to-list 'auto-insert-alist
+             '(("\\.\\(CC?\\|cc\\|cxx\\|cpp\\|c++\\)\\'" . "C++ skeleton")
+               nil
+               "/*" \n
+               (file-name-nondirectory (buffer-file-name)) \n
+               " */" > \n \n
+               "#include <iostream>" \n \n
+               "using namespace std;" \n \n
+               "int main()" \n
+               -4 "{" \n
+               > _ \n
+               > _ "return 0;" \n
+               -4 "}" > \n))
 
 (defvar emacs-start-time)
 (add-hook 'emacs-startup-hook #'emacs-startup-message)
