@@ -82,7 +82,8 @@
 
 ;; Package configuration
 (require 'package)
-(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
 
 (when (version< emacs-version "27.0") (package-initialize))
 ;; Install dependencies
@@ -94,6 +95,7 @@
   :ensure t)
 
 (use-package exec-path-from-shell
+  :ensure t
   :config (when (memq window-system '(mac ns x))
             (exec-path-from-shell-initialize)))
 
@@ -117,11 +119,13 @@
    org-startup-folded nil))
 
 (use-package rust-mode
-    :config
+  :ensure t
+  :config
   (setq rust-format-on-save t)
   (setq rust-indent-offset 4))
 
 (use-package cargo-mode
+  :ensure t
   :config
   (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
