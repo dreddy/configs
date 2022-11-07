@@ -136,8 +136,8 @@
     (unbind-key "M-<" ggtags-mode-map)
     (unbind-key "M->" ggtags-mode-map))
 
-(use-package spacemacs-theme
-  :defer t
+(use-package spacemacs-common
+  :ensure spacemacs-theme
   :init (load-theme 'spacemacs-dark t))
 
 (use-package markdown-mode
