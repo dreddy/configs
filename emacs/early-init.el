@@ -25,4 +25,6 @@
 (push '(vertical-scroll-bars . nil) default-frame-alist)
 (push '(inhibit-double-buffering . t) default-frame-alist) ;; RealVNC
 
-(setq load-prefer-newer t)
+(setq
+ load-prefer-newer t
+ create-lockfiles nil)
