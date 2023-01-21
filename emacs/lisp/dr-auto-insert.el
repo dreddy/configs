@@ -1,5 +1,4 @@
 (require 'autoinsert)
-
 (auto-insert-mode 1)
 (setq auto-insert-alist '())
 (setq auto-insert-query nil)
