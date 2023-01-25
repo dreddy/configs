@@ -21,8 +21,10 @@
               (garbage-collect))))
 
 ;; Faster to disable these here (before they've been initialized)
-(push '(tool-bar-lines . 0) default-frame-alist)
-(push '(vertical-scroll-bars . nil) default-frame-alist)
+(dolist (mode '(tool-bar-mode tooltip-mode scroll-bar-mode))
+  (when (fboundp mode)
+    (funcall mode 0)))
+
 (push '(inhibit-double-buffering . t) default-frame-alist) ;; RealVNC
 
 (setq
