@@ -32,8 +32,7 @@
        (setq inhibit-compacting-font-caches t))
       ((eq system-type 'darwin)
        (setq mac-command-modifier 'meta
-             mac-option-modifier 'super)
-       (exec-path-from-shell-initialize))
+             mac-option-modifier 'super))
       ) ;; end cond
 
 ;; Enable these
