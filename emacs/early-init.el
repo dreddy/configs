@@ -25,7 +25,17 @@
   (when (fboundp mode)
     (funcall mode 0)))
 
-(push '(inhibit-double-buffering . t) default-frame-alist) ;; RealVNC
+;; Platform specific settings
+(cond ((eq system-type 'windows-nt)
+       (setq inhibit-compacting-font-caches t))
+      ((eq system-type 'darwin)
+       (setq mac-command-modifier 'meta
+             mac-option-modifier 'super)
+       (push '(font . "Menlo-12") default-frame-alist)
+       (setq-default line-spacing 1))
+      ((eq system-type 'gnu/linux)
+       (push '(inhibit-double-buffering . t) 'default-frame-alist))
+      ) ;; end cond
 
 (setq
  load-prefer-newer t

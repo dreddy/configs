@@ -22,19 +22,6 @@
 
 (add-to-list 'load-path (expand-file-name "lisp/" user-emacs-directory))
 
-;; Display
-(when (display-graphic-p)
-  (tool-bar-mode -1)              ; Disable the tool bar
-  (tooltip-mode -1))              ; Disable the tooltips
-
-;; Platform specific settings
-(cond ((eq system-type 'windows-nt)
-       (setq inhibit-compacting-font-caches t))
-      ((eq system-type 'darwin)
-       (setq mac-command-modifier 'meta
-             mac-option-modifier 'super))
-      ) ;; end cond
-
 ;; Enable these
 (dolist (c '( narrow-to-region narrow-to-page upcase-region downcase-region))
   (put c 'disabled nil))
@@ -45,7 +32,12 @@
 (add-hook 'prog-mode-hook (electric-pair-mode t))
 (add-hook 'prog-mode-hook (auto-insert-mode t))
 
+;; Buffer encoding
+(prefer-coding-system       'utf-8)
 (set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+(set-language-environment   'utf-8)
 
 ;; Default indentation
 (setq-default
@@ -71,7 +63,7 @@
  mark-ring-max 128
  find-file-visit-truename t
  vc-follow-symlinks t
-  backup-directory-alist '((".*" . "~/.config/emacs/autosaves"))
+ backup-directory-alist '((".*" . "~/.config/emacs/autosaves"))
  auto-save-list-file-prefix "~/.config/emacs/autosaves/"
  auto-save-file-name-transforms '((".*" "~/.config/emacs/autosaves/" t))
  custom-file (expand-file-name "custom.el" user-emacs-directory))
@@ -137,7 +129,9 @@
 ;;    (set-face-foreground 'font-lock-comment-face "#fc0"))
 (use-package emacs
   :config
-  (load-theme 'tango-dark))
+  (load-theme 'deeper-blue)
+  (set-face-foreground 'font-lock-comment-face "#777")
+  (set-face-foreground 'font-lock-comment-delimiter-face "#777"))
 
 (use-package markdown-mode
   :ensure t
