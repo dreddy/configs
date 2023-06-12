@@ -26,6 +26,7 @@
     (funcall mode 0)))
 
 (setq frame-resize-pixelwise t)
+(push '(background-color . "#123") default-frame-alist)
 
 ;; Platform specific settings
 (cond ((eq system-type 'windows-nt)
