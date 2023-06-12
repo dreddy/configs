@@ -25,9 +25,12 @@
   (when (fboundp mode)
     (funcall mode 0)))
 
+(setq frame-resize-pixelwise t)
+
 ;; Platform specific settings
 (cond ((eq system-type 'windows-nt)
        (setq inhibit-compacting-font-caches t))
+       (push '(font . "Consolas-12") default-frame-alist)
       ((eq system-type 'darwin)
        (setq mac-command-modifier 'meta
              mac-option-modifier 'super)
