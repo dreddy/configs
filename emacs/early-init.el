@@ -1,7 +1,7 @@
 ;;; -*- lexical-binding: t -*-
 
 ;; Debug
-;(setq init-file-debug t)
+(setq init-file-debug t)
 
 ;; Init Speedup
 (let ((default-fnh-list file-name-handler-alist)
@@ -29,15 +29,15 @@
 
 ;; Platform specific settings
 (cond ((eq system-type 'windows-nt)
-       (setq inhibit-compacting-font-caches t))
-       (push '(font . "Consolas-12") default-frame-alist)
+       (setq inhibit-compacting-font-caches t)
+       (push '(font . "Consolas-12") default-frame-alist))
       ((eq system-type 'darwin)
        (setq mac-command-modifier 'meta
              mac-option-modifier 'super)
-       (push '(font . "Menlo-12") default-frame-alist)
-       (setq-default line-spacing 1))
+       (setq-default line-spacing 1)
+       (push '(font . "Menlo-12") default-frame-alist))
       ((eq system-type 'gnu/linux)
-       (push '(inhibit-double-buffering . t) 'default-frame-alist))
+       (push '(inhibit-double-buffering . t) default-frame-alist))
       ) ;; end cond
 
 (setq
