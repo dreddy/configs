@@ -33,11 +33,7 @@
 (add-hook 'prog-mode-hook (auto-insert-mode t))
 
 ;; Buffer encoding
-(prefer-coding-system       'utf-8)
-(set-default-coding-systems 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-language-environment   'utf-8)
+(set-language-environment   "UTF-8")
 
 ;; Default indentation
 (setq-default
@@ -48,8 +44,8 @@
  column-number-mode t
  c-basic-offset 4
  tab-width 8
- word-wrap 1
- buffer-file-coding-system 'utf-8)
+ word-wrap 1)
+
 
 (setq
  show-paren-style 'mixed
@@ -62,11 +58,14 @@
  kill-ring-max 128
  mark-ring-max 128
  find-file-visit-truename t
- vc-follow-symlinks t
- backup-directory-alist '((".*" . "~/.config/emacs/autosaves"))
- auto-save-list-file-prefix "~/.config/emacs/autosaves/"
- auto-save-file-name-transforms '((".*" "~/.config/emacs/autosaves/" t))
- custom-file (expand-file-name "custom.el" user-emacs-directory))
+ vc-follow-symlinks t)
+
+
+(setq backup-directory-alist ; Backup directory
+      `(("." .
+         ,(expand-file-name "backups" user-emacs-directory))))
+
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (when (file-exists-p custom-file)
   (load custom-file 'noerror))
 
