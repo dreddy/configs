@@ -19,6 +19,7 @@
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
+(setq use-package-always-ensure t)
 
 (add-to-list 'load-path (expand-file-name "lisp/" user-emacs-directory))
 
@@ -71,11 +72,12 @@
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
-(use-package use-package-ensure-system-package
-  :ensure t)
+(delete-selection-mode 1)
+(global-auto-revert-mode t)
+
+(use-package use-package-ensure-system-package)
 
 (use-package exec-path-from-shell
-  :ensure t
   :config (when (memq window-system '(mac ns x))
             (exec-path-from-shell-initialize)))
 
@@ -99,18 +101,15 @@
    org-startup-folded nil))
 
 (use-package rust-mode
-  :ensure t
   :config
   (setq rust-format-on-save t)
   (setq rust-indent-offset 4))
 
 (use-package cargo-mode
-  :ensure t
   :config
   (add-hook 'rust-mode-hook 'cargo-minor-mode))
 
 (use-package ggtags
-    :ensure t
     :commands ggtags-mode
     :config
     (unbind-key "M-<" ggtags-mode-map)
@@ -128,7 +127,6 @@
    (set-face-foreground 'font-lock-comment-face "#fc0"))
 
 (use-package markdown-mode
-  :ensure t
   :commands (markdown-mode gfm-mode)
   :mode (("README\\.md\\'" . gfm-mode))
   :init (setq markdown-command "/usr/bin/markdown"))
