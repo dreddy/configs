@@ -40,7 +40,7 @@
        (push '(font . "Consolas-12") default-frame-alist))
       ((eq system-type 'darwin)
        (setq mac-command-modifier 'meta
-             mac-option-modifier 'super)
+             mac-option-modifier nil)
        (setq-default line-spacing 1)
        (push '(font . "Menlo-12") default-frame-alist))
       ((eq system-type 'gnu/linux)
