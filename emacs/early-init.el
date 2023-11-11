@@ -17,6 +17,8 @@
 
   (add-hook 'after-init-hook
             (lambda ()
+              (when custom-file
+                    (load-file custom-file))
               (message "Started in %s %d GCs" (emacs-init-time) gcs-done)
               (setq file-name-handler-alist default-fnh-list
                     gc-cons-threshold default-gc-threshold
@@ -24,12 +26,12 @@
               ))
 
 ;; Faster to disable these here (before they've been initialized)
-(dolist (mode '(tool-bar-mode tooltip-mode scroll-bar-mode))
+(dolist (mode '(tool-bar-mode tooltip-mode scroll-bar-mode blink-cursor-mode))
   (when (fboundp mode)
     (funcall mode -1)))
 
-(setq frame-resize-pixelwise t)
-(setq frame-inhibit-implied-resize t)
+(setq frame-resize-pixelwise t
+      frame-inhibit-implied-resize t)
 
 ;; Platform specific settings
 (push '(background-color . "#123") default-frame-alist)
