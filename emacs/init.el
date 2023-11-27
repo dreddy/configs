@@ -1,5 +1,10 @@
 ;;-*- lexical-binding: t -*-
 
+
+(when (version< emacs-version "27.0")
+  (let ((dafile (expand-file-name "early-init.el"  user-emacs-directory)))
+                  (when (file-exists-p dafile) (load-file dafile))))
+
 ;; Set proxy for work machines (EC in pdx,sc,sj and personal machines)
 (if (string-match "\\(^dreddy\\|^plx\\|^sc\\|^sj\\)" (system-name))
   (setq url-proxy-services
@@ -9,17 +14,21 @@
           ("socks" . "proxy-dmz.intel.com:1080")
           )))
 
-;; Package configuration
+;; Package configuration and use-package
 (require 'package)
 (add-to-list 'package-archives
              '("melpa" . "https://melpa.org/packages/"))
 
 (when (version< emacs-version "27.0") (package-initialize))
-;; Install dependencies
+(setq-default use-package-always-ensure t)
 (unless (package-installed-p 'use-package)
   (package-refresh-contents)
   (package-install 'use-package))
-(setq use-package-always-ensure t)
+
+(setq-default
+ use-package-always-defer t ; Always derger loading packages
+ use-package-verbose nil ; Don't report loading details
+ use-package-expand-minimally t)  ; make the expanded code as minimal as possible
 
 (add-to-list 'load-path (expand-file-name "lisp/" user-emacs-directory))
 
@@ -53,29 +62,29 @@
  inhibit-startup-screen t
  initial-scratch-message ";; "
  blink-cursor-mode nil
+ use-short-answers t
  unibyte-display-via-language-environment t
  auto-save-default nil
  select-enable-primary t
  kill-ring-max 128
  mark-ring-max 128
  find-file-visit-truename t
- vc-follow-symlinks t)
+ vc-follow-symlinks t
+ custom-file (expand-file-name "custom.el" user-emacs-directory))
 
+(when (boundp 'mac-pass-command-to-system)
+  (setq mac-pass-command-to-system nil))
 
 (setq backup-directory-alist ; Backup directory
       `(("." .
          ,(expand-file-name "backups" user-emacs-directory))))
 
-(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(when (file-exists-p custom-file)
-  (load custom-file 'noerror))
 
 (add-hook 'before-save-hook 'delete-trailing-whitespace)
 
+(transient-mark-mode 1)
 (delete-selection-mode 1)
 (global-auto-revert-mode t)
-
-(use-package use-package-ensure-system-package)
 
 (use-package exec-path-from-shell
   :config (when (memq window-system '(mac ns x))
@@ -114,6 +123,21 @@
     :config
     (unbind-key "M-<" ggtags-mode-map)
     (unbind-key "M->" ggtags-mode-map))
+
+(use-package calc
+  ;; Calculator
+  :custom
+  (math-additional-units
+   '((GiB "1024 * MiB" "Giga Byte")
+     (MiB "1024 * KiB" "Mega Byte")
+     (KiB "1024 * B" "Kilo Byte")
+     (B nil "Byte")
+     (Gib "1024 * Mib" "Giga Bit")
+     (Mib "1024 * Kib" "Mega Bit")
+     (Kib "1024 * b" "Kilo Bit")
+     (b "B / 8" "Bit")))
+  :config
+  (setq math-units-table nil))
 
 (use-package emacs
    :config
