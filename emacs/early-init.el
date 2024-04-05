@@ -34,7 +34,6 @@
       frame-inhibit-implied-resize t)
 
 ;; Platform specific settings
-(push '(background-color . "#123") default-frame-alist)
 (cond ((eq system-type 'windows-nt)
        (setq inhibit-compacting-font-caches t)
        (push '(font . "Consolas-12") default-frame-alist))
