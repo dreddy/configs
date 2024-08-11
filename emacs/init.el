@@ -5,15 +5,6 @@
   (let ((dafile (expand-file-name "early-init.el"  user-emacs-directory)))
                   (when (file-exists-p dafile) (load-file dafile))))
 
-;; Set proxy for work machines (EC in pdx,sc,sj and personal machines)
-(if (string-match "\\(^dreddy\\|^plx\\|^sc\\|^sj\\)" (system-name))
-  (setq url-proxy-services
-        '(("no_proxy" . "^\\(localhost\\|10.*\\|134.134.*\\|*.intel.com\\)")
-          ("http" . "proxy-dmz.intel.com:912")
-          ("https" . "proxy-dmz.intel.com:912")
-          ("socks" . "proxy-dmz.intel.com:1080")
-          )))
-
 ;; Package configuration and use-package
 (require 'package)
 (add-to-list 'package-archives
