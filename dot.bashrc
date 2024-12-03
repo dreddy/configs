@@ -57,9 +57,9 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[00;32m\]\u@\h\[\033[00m\]:\[\033[00;33m\]\w\[\033[00m\]\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[00;32m\]\u@\h\[\033[00m\]:[\033[00;33m\]\w\[\033[00m]\$ '
 else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:[\w]\$ '
 fi
 unset color_prompt force_color_prompt
 
@@ -129,17 +129,6 @@ echo "obase=2; $*" | bc
 
 b2d () {
 echo "ibase=2; $*" | bc
-}
-
-setup_proxy () {
-	declare -x -g auto_proxy="http://wpad.intel.com/wpad.dat"
-	declare -x -g http_proxy="http://proxy-dmz.intel.com:912"
-	declare -x -g https_proxy="http://proxy-dmz.intel.com:912"
-	declare -x -g no_proxy="intel.com,.intel.com,10.0.0.0/8,192.168.0.0/16,localhost,127.0.0.0/8,134.134.0.0/16"
-	declare -x -g socks_proxy="proxy-dmz.intel.com"
-	declare -x -g HTTP_PROXY=$http_proxy
-	declare -x -g HTTPS_PROXY=$https_proxy
-	declare -x -g NO_PROXY=$no_proxy
 }
 
 setup_pyenv () {
