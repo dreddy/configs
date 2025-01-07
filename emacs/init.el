@@ -1,44 +1,43 @@
-;;-*- lexical-binding: t -*-
+;; init.el -*- lexical-binding: t; -*-
 
+(when (< emacs-major-version 27)
+  (let ((ifile (locate-user-emacs-file "early-init.el")))
+    (when (file-exists-p ifile) (load-file ifile))))
 
-(when (version< emacs-version "27.0")
-  (let ((dafile (expand-file-name "early-init.el"  user-emacs-directory)))
-                  (when (file-exists-p dafile) (load-file dafile))))
-
-;; Package configuration and use-package
-(require 'package)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
-
-(when (version< emacs-version "27.0") (package-initialize))
-(setq-default use-package-always-ensure t)
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
+(add-to-list 'load-path (locate-user-emacs-file "lisp/"))
 
 (setq-default
- use-package-always-defer t ; Always derger loading packages
- use-package-verbose nil ; Don't report loading details
- use-package-expand-minimally t)  ; make the expanded code as minimal as possible
+ package-native-compile t
+ use-package-always-defer t
+ use-package-always-ensure t)
 
-(add-to-list 'load-path (expand-file-name "lisp/" user-emacs-directory))
+(require 'package)
+;(package-initialize)
+
+(add-to-list 'package-archives
+       '("melpa"  . "https://melpa.org/packages/"))
+
+(when (< emacs-major-version 29)
+  (unless (package-installed-p 'use-package)
+    (unless package-archive-contents
+      (package-refresh-contents))
+    (package-install 'use-package)))
 
 ;; Enable these
-(dolist (c '( narrow-to-region narrow-to-page upcase-region downcase-region))
+(dolist (c '(list-timers narrow-to-region narrow-to-page
+			 upcase-region downcase-region))
   (put c 'disabled nil))
-;; Sane behaviors
-(defalias 'yes-or-no-p 'y-or-n-p)
 
-(add-hook 'prog-mode-hook (show-paren-mode t))
-(add-hook 'prog-mode-hook (electric-pair-mode t))
-(add-hook 'prog-mode-hook (auto-insert-mode t))
+(add-to-list 'display-buffer-alist
+             '("\\`\\*\\(Warnings\\|Compile-Log\\)\\*\\'"
+               (display-buffer-no-window)
+               (allow-no-window . t)))
 
-;; Buffer encoding
-(set-language-environment   "UTF-8")
-
-;; Default indentation
 (setq-default
+ sentence-end-double-space nil
+ show-paren-style 'mixed
  indent-tabs-mode nil
+ tab-always-indent 'complete
  indicate-empty-lines t
  fill-column 80
  line-number-mode t
@@ -47,67 +46,57 @@
  tab-width 8
  word-wrap 1)
 
+(define-key global-map (kbd "M-g") 'goto-line)
 
-(setq
- show-paren-style 'mixed
- inhibit-startup-screen t
- initial-scratch-message ";; "
- blink-cursor-mode nil
- use-short-answers t
- unibyte-display-via-language-environment t
- auto-save-default nil
- select-enable-primary t
- kill-ring-max 128
- mark-ring-max 128
- find-file-visit-truename t
- vc-follow-symlinks t
- custom-file (expand-file-name "custom.el" user-emacs-directory))
+(setq backup-directory-alist
+      `(("." . ,(expand-file-name "tmp/backups/" user-emacs-directory))))
+(setq backup-by-copying t)
+
+(add-hook 'before-save-hook #'delete-trailing-whitespace)
 
 (when (boundp 'mac-pass-command-to-system)
   (setq mac-pass-command-to-system nil))
 
-(setq backup-directory-alist ; Backup directory
-      `(("." .
-         ,(expand-file-name "backups" user-emacs-directory))))
+(use-package emacs
+  :config
+  (load-theme 'wombat))
 
-
-(add-hook 'before-save-hook 'delete-trailing-whitespace)
-
-(transient-mark-mode 1)
-(delete-selection-mode 1)
-(global-auto-revert-mode t)
-
-(use-package exec-path-from-shell
-  :config (when (memq window-system '(mac ns x))
-            (exec-path-from-shell-initialize)))
+(use-package prog-mode
+  :hook ((prog-mode . show-paren-mode)
+         (prog-mode . electric-pair-mode)
+         ;;         (prog-mode . auto-insert-mode)
+         (prog-mode . auto-fill-mode)
+         (prog-mode . electric-indent-mode)
+         (prog-mode . hs-minor-mode))
+  :bind
+  ("<backtab>" . hs-toggle-hiding)
+  :config
+  (setq display-line-numbers-type 'relative))
 
 (use-package python
   :mode ("\\.py\\'" . python-mode)
-  :ensure nil
   :config
   (setq
    python-shell-interpreter "python3"
    python-indent-offset 4
    python-indent-guess-indent-offset-verbose nil)
-  (add-hook 'python-mode-hook 'hs-minor-mode))
+   (add-hook 'python-mode-hook 'hs-minor-mode))
 
-(use-package org
+(use-package delsel
   :ensure nil
-  :config
-  (setq
-   org-log-done t
-   org-src-fontify-natively t
-   org-startup-indented t
-   org-startup-folded nil))
+  :hook (after-init . delete-selection-mode))
 
-(use-package rust-mode
+(use-package dired
+  :ensure nil
+  :commands (dired)
+  :hook
+  ((dired-mode . dired-hide-details-mode)
+   (dired-mode . hl-line-mode))
   :config
-  (setq rust-format-on-save t)
-  (setq rust-indent-offset 4))
-
-(use-package cargo-mode
-  :config
-  (add-hook 'rust-mode-hook 'cargo-minor-mode))
+  (setq dired-recursive-copies 'always)
+  (setq dired-recursive-deletes 'always)
+  (setq delete-by-moving-to-trash t)
+  (setq dired-dwim-target t))
 
 (use-package ggtags
     :commands ggtags-mode
@@ -115,54 +104,48 @@
     (unbind-key "M-<" ggtags-mode-map)
     (unbind-key "M->" ggtags-mode-map))
 
-(use-package calc
-  ;; Calculator
-  :custom
-  (math-additional-units
-   '((GiB "1024 * MiB" "Giga Byte")
-     (MiB "1024 * KiB" "Mega Byte")
-     (KiB "1024 * B" "Kilo Byte")
-     (B nil "Byte")
-     (Gib "1024 * Mib" "Giga Bit")
-     (Mib "1024 * Kib" "Mega Bit")
-     (Kib "1024 * b" "Kilo Bit")
-     (b "B / 8" "Bit")))
+(use-package org
+  :ensure nil
   :config
-  (setq math-units-table nil))
+  (setq
+     org-log-done t
+     org-src-fontify-natively t
+     org-startup-indented t
+     org-startup-folded nil
 
-(use-package emacs
-   :config
-   (load-theme 'wombat))
+     org-html-doctype "html5"
+     org-export-with-toc nil
+     org-export-with-author t
+     org-export-with-email nil
+     org-export-with-creator nil
+     org-export-with-section-numbers t
 
-(use-package markdown-mode
-  :commands (markdown-mode gfm-mode)
-  :mode (("README\\.md\\'" . gfm-mode))
-  :init (setq markdown-command "/usr/bin/markdown"))
+     org-html-preamble nil
+     org-html-postamble nil )
+  )
 
-;; C-mode for my own and kernel styles
-(require 'linux-kernel-c-style)
-(defun dr/c-mode-hook ()
-    ;; Enable kernel mode for the appropriate files
-  (if (and buffer-file-name
-           (string-match "linux.git" buffer-file-name))
-      (linux-kernel-set-c-style)
-    (progn
-      (setq c-default-style "linux"
-            c-basic-offset 4))))
+(defun my-org-inline-css-hook (exporter)
+  "Insert custom inline css"
+  (when (eq exporter 'html)
+    (let ((homestyle "~/.config/emacs/org-style.css")) ;; <- set your own style
+      (setq org-html-head-include-default-style nil)
+      (setq org-html-head (concat
+                           "<style type=\"text/css\">\n"
+                           "<!--/*--><![CDATA[/*><!--*/\n"
+                           (with-temp-buffer
+                             (insert-file-contents homestyle)
+                             (buffer-string))
+                           "/*]]>*/-->\n"
+                           "</style>\n")))))
 
-(require 'dr-auto-insert)
 
-;; Key-bindings
-(define-key global-map (kbd "M-g") 'goto-line)
-; Let C-x o work across frames if there is only one window
-(defun my-other-window-or-frame ()
-  "Switch to another frame if only one window exists."
-  (interactive)
-  (let ((try-other-frames
-         (and (> (length (frame-list)) 1)
-              (eq (length (window-list)) 1))))
-    (if try-other-frames            ; This should be unnecessary
-        (other-frame 1)             ; but I'm too lazy to fix it
-      (other-window 1))))
+(add-hook 'org-export-before-processing-hook 'my-org-inline-css-hook)
 
-(define-key global-map (kbd "C-x o") 'my-other-window-or-frame)
+(use-package gptel
+  :config
+  (setq-default
+   gptel-model 'gemini-1.5-flash
+   gptel-backend (gptel-make-gemini "Gemini-1.5-flash"
+                   :key "xxx"
+                   :stream t)
+   ))
