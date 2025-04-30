@@ -8,10 +8,13 @@
  create-lockfiles nil)
 
 ;; Init Speedup
-(let ((default-fnh-list file-name-handler-alist)
-      (default-gc-threshold gc-cons-threshold)
-      (default-vc-handled-backends vc-handled-backends))
+(let ((default-gc-threshold gc-cons-threshold)
+      (default-gc-cons-pct gc-cons-percentage)
+      (default-vc-handled-backends vc-handled-backends)
+      (default-fnh-list file-name-handler-alist))
+
   (setq gc-cons-threshold most-positive-fixnum
+        gc-cons-percentage 0.5
         file-name-handler-alist nil
         vc-handled-backends nil)
 
@@ -19,11 +22,16 @@
             (lambda ()
               (when (file-exists-p custom-file) ; Don’t forget to load it, we still need it
                 (load-file custom-file))
-              (message "Started in %s %d GCs" (emacs-init-time) gcs-done)
-              (setq file-name-handler-alist default-fnh-list
+              (setq
                     gc-cons-threshold default-gc-threshold
-                    vc-handled-backends default-vc-handled-backends))
-            ))
+                    gc-cons-percentage default-gc-cons-pct
+                    vc-handled-backends default-vc-handled-backends)
+              (setq file-name-handler-alist
+                    (delete-dups (append file-name-handler-alist default-fnh-list)))
+              (message "VC %s" vc-handled-backends)
+              (message "Started in %s %d GCs" (emacs-init-time) gcs-done))
+            )
+  )
 
 ;; Faster to disable these here (before they've been initialized)
 (dolist (mode '(tool-bar-mode tooltip-mode scroll-bar-mode blink-cursor-mode))
@@ -37,8 +45,12 @@
       use-dialog-box t ; only for mouse events, which I seldom use
       use-file-dialog nil
       use-short-answers t
+      inhibit-splash-screen t
+      inhibit-startup-screen t
       inhibit-x-resources t
       initial-scratch-message nil
+      inhibit-startup-echo-area-message user-login-name ; read the docstring
+      inhibit-startup-buffer-menu t
       custom-file (locate-user-emacs-file "custom.el"))
 
 ;; Contrary to common configurations, this is all that's needed to set UTF-8

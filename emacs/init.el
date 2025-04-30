@@ -141,11 +141,16 @@
 
 (add-hook 'org-export-before-processing-hook 'my-org-inline-css-hook)
 
+(setq auth-source-debug t)
+(setq auth-sources '("~/.authinfo"))
+
 (use-package gptel
   :config
   (setq-default
-   gptel-model 'gemini-1.5-flash
-   gptel-backend (gptel-make-gemini "Gemini-1.5-flash"
-                   :key "xxx"
-                   :stream t)
+   gptel-model 'gemini-2.5-pro-exp-03-25
+   gptel-backend (gptel-make-gemini "Gemini"
+                   :stream t
+                   :key gptel-api-key)
+                  ;; :key (gptel-api-key-from-auth-source "generativelanguage.googleapis.com"))
+
    ))
